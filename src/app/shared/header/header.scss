@@ -1,0 +1,23 @@
+// Variables
+$gray: #333333;
+
+.bg-gray-custom {
+  background-color: $gray;
+}
+
+.logo {
+  max-height: 40px; // nunca demasiado grande
+  height: auto;
+  width: auto;
+  display: block;
+}
+
+.navbar-toggler {
+  filter: invert(1);
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
