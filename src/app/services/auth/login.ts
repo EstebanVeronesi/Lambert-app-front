@@ -14,7 +14,7 @@ export interface LoginRequest {
 export class LoginService {
   currentUserLogInService = new BehaviorSubject<boolean>(false);
 
-  private apiUrl = 'http://localhost:3000/api/auth/login'; // URL del backend
+  private apiUrl = 'http://localhost:3000/login'; // URL del backend
 
   constructor(private http: HttpClient) {}
 

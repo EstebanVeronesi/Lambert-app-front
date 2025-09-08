@@ -1,0 +1,97 @@
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+<!-- email  -->
+<div class="mb-3">
+  <label for="email" class="form-label">Email</label>
+  <input
+    formControlName="email"
+    type="email"
+    class="form-control"
+    id="email"
+  />
+  @if (email?.invalid && (email?.dirty || email?.touched)) {
+    <div class="text-danger">
+      @if (email?.hasError('required')) {
+        <div>El Email es requerido</div>
+      }
+      @if (email?.hasError('email')) {
+        <div>El Email debe tener un formato de email válido</div>
+      }
+    </div>
+  }
+</div>
+
+  <!-- DNI -->
+  <div class="mb-3">
+    <label for="dni" class="form-label">DNI</label>
+    <input
+      formControlName="dni"
+      type="text"
+      class="form-control"
+      id="dni"
+    />
+    @if (dni?.invalid && (dni?.dirty || dni?.touched)) {
+      <div class="text-danger">
+        @if (dni?.hasError('required')) {
+          <div>El DNI es requerido</div>
+        }
+        @if (dni?.hasError('pattern')) {
+          <div>El DNI debe contener solo números</div>
+        }
+        @if (dni?.hasError('minlength')) {
+          <div>El DNI debe tener al menos 7 dígitos</div>
+        }
+        @if (dni?.hasError('maxlength')) {
+          <div>El DNI no puede superar los 8 dígitos</div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- nombre -->
+  <div class="mb-3">
+    <label for="nombre" class="form-label">Nombre Completo</label>
+    <input
+      formControlName="nombre"
+      type="text"
+      class="form-control"
+      id="nombre"
+    />
+    @if (nombre?.invalid && (nombre?.dirty || nombre?.touched)) {
+      <div class="text-danger">
+        @if (nombre?.hasError('required')) {
+          <div>El nombre completo es requerido</div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="mb-3">
+    <label for="password" class="form-label">Contraseña</label>
+    <input
+      formControlName="password"
+      type="password"
+      class="form-control"
+      id="password"
+    />
+    @if (password?.invalid && (password?.dirty || password?.touched)) {
+      <div class="text-danger">
+        @if (password?.hasError('required')) {
+          <div>La contraseña es requerida</div>
+        }
+        @if (password?.hasError('minlength')) {
+          <div>Debe tener al menos 6 caracteres</div>
+        }
+        @if (password?.hasError('pattern')) {
+          <div>
+            Debe contener al menos: una mayúscula, una minúscula, un número y un
+            símbolo.
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- SUBMIT -->
+  <button type="submit" class="btn btn-success">Registrarse</button>
+</form>
