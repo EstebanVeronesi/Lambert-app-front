@@ -7,13 +7,14 @@ export interface RegisterRequest {
   dni: string;
   email: string;
   password: string;
+  rol: 'admin' | 'vendedor' | 'ofi_tec';
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegisterService {
-  private apiUrl = 'http://localhost:3000'; // tu backend Express
+  private apiUrl = 'http://localhost:3000';
   private registerStatus = new BehaviorSubject<boolean>(false);
 
   currentUserRegisterService = this.registerStatus.asObservable();
@@ -21,7 +22,7 @@ export class RegisterService {
   constructor(private http: HttpClient) {}
 
   register(data: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data);
+    return this.http.post(`${this.apiUrl}/api/register`, data, { withCredentials: true });
   }
 
   setRegisterStatus(status: boolean) {

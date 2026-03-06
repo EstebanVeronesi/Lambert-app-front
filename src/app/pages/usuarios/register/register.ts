@@ -1,18 +1,21 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RegisterService, RegisterRequest } from '../../services/auth/register';
+import { Router, RouterLink } from '@angular/router';
+import { RegisterService, RegisterRequest } from '../../../services/auth/register.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './register.html',
-  styleUrl: './register.scss',
+  styleUrls: ['./register.scss'],
 })
 export class Register implements OnInit {
   registerForm: FormGroup;
   isRegistered = signal(false);
+  cargando = false;
+  error: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -30,6 +33,7 @@ export class Register implements OnInit {
         Validators.minLength(7), 
         Validators.maxLength(8)
       ]], // solo números de 7 u 8 dígitos
+      rol: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: [
         '',
@@ -45,50 +49,44 @@ export class Register implements OnInit {
   }
 
   ngOnInit(): void {
-    // escuchamos estado global de registro (si querés manejar flags globales)
     this.registerService.currentUserRegisterService.subscribe((registered) => {
       this.isRegistered.set(registered);
     });
   }
 
   // Getters para acceder a los form controls desde el template
-  get email() {
-    return this.registerForm.get('email');
-  }
+  get nombre() { return this.registerForm.get('nombre'); }
 
-  get nombre() {
-    return this.registerForm.get('nombre');
-  }
+  get id() { return this.registerForm.get('id'); }
 
-  get dni() {
-    return this.registerForm.get('dni');
-  }
+  get rol() { return this.registerForm.get('rol'); }
 
-  get password() {
-    return this.registerForm.get('password');
-  }
+  get email() { return this.registerForm.get('email'); }
 
-
+  get password() { return this.registerForm.get('password'); }
 
 
   register() {
     if (this.registerForm.valid) {
+      this.cargando = true;
       const data: RegisterRequest = this.registerForm.value as RegisterRequest;
 
       this.registerService.register(data).subscribe({
         next: () => {
-          alert('✅ Registro exitoso. Ahora puedes iniciar sesión.');
-          this.router.navigateByUrl('/iniciar-sesion');
+          alert('Registro exitoso. Ahora puedes iniciar sesión.');
           this.registerForm.reset();
+          this.cargando = false;
+          this.error = null;
         },
         error: (err) => {
           console.error('Error en registro:', err);
-          alert(err.error?.error || '❌ Error al registrar usuario.');
+          this.error = err.error?.error || 'Error al registrar usuario.';
+          this.cargando = false;
         },
       });
     } else {
       this.registerForm.markAllAsTouched();
-      alert('Formulario inválido. Revisa los campos.');
+      this.error = 'Formulario inválido. Revisa los campos.';
     }
   }
 }

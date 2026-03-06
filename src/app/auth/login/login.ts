@@ -1,13 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginService } from '../../services/auth/login';
-import { LoginRequest } from '../../services/auth/login';
+import { LoginService } from '../../services/auth/login.service';
+import { LoginRequest } from '../../services/auth/login.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -21,7 +22,7 @@ export class Login implements OnInit {
   ) {
     // inicializamos el form en el constructor
     this.loginForm = this.formBuilder.group({
-      email: ['esteban@gmail.com', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
   }
@@ -29,6 +30,11 @@ export class Login implements OnInit {
     this.loginService.currentUserLogInService.subscribe((loggedIn) => {
       this.isLoggedIn.set(loggedIn);
     });
+
+    this.loginService.isLoggedIn().subscribe({
+    next: () => this.isLoggedIn.set(true),
+    error: () => this.isLoggedIn.set(false),
+  });
   }
 
   get email() {
@@ -44,8 +50,7 @@ export class Login implements OnInit {
       const credentials: LoginRequest = this.loginForm.value as LoginRequest;
       this.loginService.login(credentials).subscribe({
         next: () => {
-          alert('Login exitoso. ¡Bienvenido!');
-          this.router.navigateByUrl('/inicio');
+          this.router.navigateByUrl('/dashboard');
           this.loginForm.reset();
         },
         error: (err) => {
@@ -60,9 +65,14 @@ export class Login implements OnInit {
   }
 
   logout() {
-    this.loginService.logout().subscribe(() => {
-      alert('Has cerrado sesión.');
+    this.loginService.logout().subscribe({
+      next: () => {
       this.router.navigateByUrl('/iniciar-sesion');
-    });
+    },
+    error: (err) => {
+      console.error('Error en logout:', err);
+      alert('No se pudo cerrar sesión. Intenta de nuevo.');
+    }
+  });
   }
 }
